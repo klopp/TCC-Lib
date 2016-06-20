@@ -53,7 +53,7 @@ static int _TccLibCallMain( TccLib *tcc ) {
         tcc_free( mem );
         return -3;
     }
-    pmain = ( main_func )tcc_get_symbol( tcc->ts, "main" );
+    pmain = ( main_func ) tcc_get_symbol( tcc->ts, "main" );
     if( !pmain ) {
         tcc_free( mem );
         return -4;
@@ -77,18 +77,37 @@ int TccLibMainFromSource( TccLib *tcc, const char *source ) {
 /* -----------------------------------------------------------------------------
  *
  -----------------------------------------------------------------------------*/
+static void _TccLibSaveStdIn( TccLib *tcc ) {
+    tcc->saved_stdout = dup( STDOUT_FILENO );
+    tcc->dev_null = fopen( TCC_DEV_NULL, "w" );
+    dup2( fileno( tcc->dev_null ), STDOUT_FILENO );
+}
+
+static void _TccLibRestoreStdIn( TccLib *tcc ) {
+    fflush( stdout );
+    fclose( tcc->dev_null );
+    dup2( tcc->saved_stdout, STDOUT_FILENO );
+    close( tcc->saved_stdout );
+}
+
+/* -----------------------------------------------------------------------------
+ *
+ -----------------------------------------------------------------------------*/
 int TccLibLoadFiles( TccLib *tcc, const char *file, ... ) {
     va_list ap;
     const char *current = file;
+    _TccLibSaveStdIn( tcc );
     va_start( ap, file );
     while( current ) {
         if( tcc_add_file( tcc->ts, current ) == -1 ) {
             va_end( ap );
+            _TccLibRestoreStdIn( tcc );
             return 1;
         }
         current = va_arg( ap, char * );
     }
     va_end( ap );
+    _TccLibRestoreStdIn( tcc );
     return 0;
 }
 
