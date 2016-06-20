@@ -9,12 +9,15 @@ int main() {
      *
      */
     TccLibInit( &tcc );
-    rc = TccLibLoadFiles( &tcc, "./t/main.c", NULL );
+    rc = TccLibLoadFiles( &tcc, "./t/hello-bye.c", NULL );
     if( rc ) {
         printf( "1) rc = %d, %s\n", rc, tcc.error );
         TccLibDown( &tcc );
         return rc;
     }
+    /*
+     *
+     */
     rc = TccLibMainFromFile( &tcc, "./t/main.c" );
     printf( "2) rc = %d, %s\n", rc, tcc.error );
     /*
