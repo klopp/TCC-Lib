@@ -13,13 +13,16 @@
 extern "C" {
 #endif
 
-#include "../tcc/libtcc.h"
-#include <limits.h>
+#include <linux/limits.h>
 #include <unistd.h>
 #include <string.h>
+#include "../tcc/libtcc.h"
+
+#define TCC_ERROR_BUF_SIZE  PATH_MAX+PATH_MAX
 
 typedef struct _TccLib {
     TCCState *ts;
+    char error[TCC_ERROR_BUF_SIZE];
 } TccLib;
 
 TccLib *TccLibInit( TccLib *pc );
