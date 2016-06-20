@@ -10,16 +10,16 @@
 #define TCC_LIB_H_
 
 #if defined(__cplusplus)
-  extern "C" {
+extern "C" {
 #endif
 
-#include "../tcc/tcc.h"
 #include "../tcc/libtcc.h"
 #include <limits.h>
+#include <unistd.h>
+#include <string.h>
 
-typedef struct _TccLib
-{
-        TCCState ts;
+typedef struct _TccLib {
+    TCCState *ts;
 } TccLib;
 
 TccLib *TccLibInit( TccLib *pc );
@@ -28,7 +28,7 @@ TccLib *TccLibReset( TccLib *pc );
 
 
 #if defined(__cplusplus)
-  }; /* extern "C" */
+}; /* extern "C" */
 #endif
 
 
