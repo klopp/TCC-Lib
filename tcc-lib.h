@@ -45,6 +45,8 @@ int TccLibLoadSources( TccLib *tcc, const char *source, ... );
 int TccLibMainFromFile( TccLib *tcc, const char *file );
 int TccLibMainFromSource( TccLib *tcc, const char *source );
 
+int TccLibBind( TccLib *tcc, const char *name, void *val );
+
 #if defined(__cplusplus)
 }; /* extern "C" */
 #endif

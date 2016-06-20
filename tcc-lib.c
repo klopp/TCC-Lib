@@ -81,6 +81,7 @@ static void _TccLibSaveStdIn( TccLib *tcc ) {
     tcc->saved_stdout = dup( STDOUT_FILENO );
     tcc->dev_null = fopen( TCC_DEV_NULL, "w" );
     dup2( fileno( tcc->dev_null ), STDOUT_FILENO );
+    *tcc->error = 0;
 }
 
 static void _TccLibRestoreStdIn( TccLib *tcc ) {
@@ -114,16 +115,29 @@ int TccLibLoadFiles( TccLib *tcc, const char *file, ... ) {
 int TccLibLoadSources( TccLib *tcc, const char *source, ... ) {
     va_list ap;
     const char *current = source;
+    _TccLibSaveStdIn( tcc );
     va_start( ap, source );
     while( current ) {
         if( tcc_compile_string( tcc->ts, current ) ) {
             va_end( ap );
+            _TccLibRestoreStdIn( tcc );
             return 1;
         }
         current = va_arg( ap, char * );
     }
     va_end( ap );
+    _TccLibRestoreStdIn( tcc );
     return 0;
+}
+
+/* -----------------------------------------------------------------------------
+ *
+ -----------------------------------------------------------------------------*/
+int TccLibBind( TccLib *tcc, const char *name, void *val ) {
+    _TccLibSaveStdIn( tcc );
+    tcc_add_symbol( tcc->ts, name, val );
+    _TccLibRestoreStdIn( tcc );
+    return *tcc->error ? -1 : 0;
 }
 
 //TCC_OUTPUT_PREPROCESS

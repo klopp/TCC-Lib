@@ -5,6 +5,8 @@
 int main() {
     TccLib tcc;
     int rc = 0;
+    int aaa = 99;
+    char bbb[] = "bBb";
     /*
      *
      */
@@ -15,6 +17,14 @@ int main() {
         TccLibDown( &tcc );
         return rc;
     }
+    rc = TccLibBind( &tcc, "aaa", &aaa );
+    rc = TccLibBind( &tcc, "aaa", &aaa );
+    if( rc ) {
+        printf( "3) rc = %d, %s\n", rc, tcc.error );
+        TccLibDown( &tcc );
+        return rc;
+    }
+    tcc_add_symbol( tcc.ts, "bbb", &bbb );
     /*
      *
      */
