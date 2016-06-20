@@ -8,21 +8,13 @@ int main() {
     /*
      *
      */
-    //FILE *fin = fopen( "./t/main.tcc", "r" );
-    //fread( source, 1, sizeof( source ), fin );
-    //fclose( fin );
-    /*
-     *
-     */
     TccLibInit( &tcc );
-    /*
-        rc = TccLibLoadFiles(&tcc, "./t/main.c", NULL);
-        if (rc) {
-            printf("1) rc = %d, %s\n", rc, tcc.error);
-            TccLibDown(&tcc);
-            return rc;
-        }
-    */
+    rc = TccLibLoadFiles( &tcc, "./t/main.c", NULL );
+    if( rc ) {
+        printf( "1) rc = %d, %s\n", rc, tcc.error );
+        TccLibDown( &tcc );
+        return rc;
+    }
     rc = TccLibMainFromFile( &tcc, "./t/main.c" );
     printf( "2) rc = %d, %s\n", rc, tcc.error );
     /*

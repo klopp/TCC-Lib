@@ -15,14 +15,22 @@ extern "C" {
 
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 #include <linux/limits.h>
 #include "../tcc/libtcc.h"
 
 #define TCC_ERROR_BUF_SIZE  PATH_MAX+PATH_MAX
+#ifdef __unix
+# define TCC_DEV_NULL "/dev/null"
+#else
+# define TCC_DEV_NULL "NUL"
+#endif
 
 typedef struct _TccLib {
     TCCState *ts;
     char error[TCC_ERROR_BUF_SIZE];
+    int saved_stdout;
+    FILE *dev_null;
 } TccLib;
 
 typedef int ( *main_func )();
