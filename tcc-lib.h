@@ -10,19 +10,20 @@
 extern "C" {
 #endif
 
-#include <unistd.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdarg.h>
-#include <linux/limits.h>
 #include "tcc.h"
 
-#define TCC_ERROR_BUF_SIZE  PATH_MAX+PATH_MAX
 #ifdef __unix
-# define TCC_DEV_NULL "/dev/null"
+# include <linux/limits.h>
+# include <stdarg.h>
+# define TCC_DEV_NULL   "/dev/null"
 #else
-# define TCC_DEV_NULL "NUL"
+# define TCC_DEV_NULL   "NUL"
+# define PATH_MAX       MAX_PATH
 #endif
+
+#define TCC_ERROR_BUF_SIZE  PATH_MAX+PATH_MAX
 
 typedef struct _TccLib {
     TCCState *ts;
