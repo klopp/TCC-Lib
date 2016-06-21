@@ -35,9 +35,9 @@ typedef struct _TccLib {
 
 typedef int ( *main_func )();
 
-TccLib *TccLibInit( TccLib *pc );
-void TccLibDown( TccLib *pc );
-TccLib *TccLibReset( TccLib *pc );
+TccLib *TccLibInit( TccLib *tcc );
+void TccLibDown( TccLib *tcc );
+TccLib *TccLibReset( TccLib *tcc );
 
 int TccLibLoadFiles( TccLib *tcc, const char *file, ... );
 int TccLibLoadSources( TccLib *tcc, const char *source, ... );
