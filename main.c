@@ -36,7 +36,12 @@ int main() {
      *
      */
     rc = TccLibMainFromFile( &tcc, "./t/main.c" );
-    printf( "2) rc = %d, %s\n", rc, tcc.error );
+    printf( "2) rc = %d, %s\n", rc, *tcc.error ? tcc.error : "no errors" );
+    /*
+     *
+     */
+    printf( "\n---\nAfter external \"main()\" execution:\naaa = %d, bbb = %s\n",
+            aaa, bbb );
     /*
      *
      */
