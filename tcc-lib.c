@@ -116,7 +116,7 @@ int TccLibLoadFiles( TccLib *tcc, const char *file, ... ) {
         if( tcc_add_file( tcc->ts, current ) == -1 ) {
             va_end( ap );
             _TccLibRestoreStdIn( tcc );
-            return 1;
+            return -1;
         }
         current = va_arg( ap, char * );
     }
@@ -134,7 +134,7 @@ int TccLibLoadSources( TccLib *tcc, const char *source, ... ) {
         if( tcc_compile_string( tcc->ts, current ) ) {
             va_end( ap );
             _TccLibRestoreStdIn( tcc );
-            return 1;
+            return -1;
         }
         current = va_arg( ap, char * );
     }
