@@ -20,6 +20,7 @@ static void _TccErrorHandler( void *opaque, const char *msg ) {
 
 TccLib *TccLibInit( TccLib *tcc ) {
     memset( tcc, 0, sizeof( TccLib ) );
+    tcc->saved_stdout = -1;
     tcc->ts = tcc_new();
     if( !tcc->ts ) {
         return NULL;
@@ -91,9 +92,15 @@ static void _TccLibSaveStdIn( TccLib *tcc ) {
 
 static void _TccLibRestoreStdIn( TccLib *tcc ) {
     fflush( stdout );
-    fclose( tcc->dev_null );
-    dup2( tcc->saved_stdout, STDOUT_FILENO );
-    close( tcc->saved_stdout );
+    if( tcc->dev_null ) {
+        fclose( tcc->dev_null );
+        tcc->dev_null = NULL;
+    }
+    if( tcc->saved_stdout != -1 ) {
+        dup2( tcc->saved_stdout, STDOUT_FILENO );
+        close( tcc->saved_stdout );
+        tcc->saved_stdout = -1;
+    }
 }
 
 /* -----------------------------------------------------------------------------
