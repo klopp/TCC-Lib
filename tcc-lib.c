@@ -97,7 +97,7 @@ static int _TccLibCallMain( TccLib *tcc ) {
  *
  -----------------------------------------------------------------------------*/
 int TccLibMainFromFile( TccLib *tcc, const char *file ) {
-    return TccLibLoadFiles( tcc, file, NULL ) ? 1 : _TccLibCallMain( tcc );
+    return TccLibLoadSourceFiles( tcc, file, NULL ) ? 1 : _TccLibCallMain( tcc );
 }
 
 int TccLibMainFromSource( TccLib *tcc, const char *source ) {
@@ -107,6 +107,50 @@ int TccLibMainFromSource( TccLib *tcc, const char *source ) {
 /* -----------------------------------------------------------------------------
  *
  -----------------------------------------------------------------------------*/
+int TccLibLoadSourceFiles( TccLib *tcc, const char *file, ... ) {
+    va_list ap;
+    const char *current = file;
+    _TccLibSaveStdOut( tcc );
+    va_start( ap, file );
+    while( current ) {
+        FILE *f = fopen( file, "r" );
+        sprintf( tcc->error, "Can not open file \"%s\": %s", current,
+                 strerror( errno ) );
+        if( f ) {
+            int size = 0;
+            fseek( f, 0, SEEK_END );
+            size = ( int ) ftell( f );
+            fseek( f, 0, SEEK_SET );
+            if( size ) {
+                sprintf( tcc->error, "No memory to read file \"%s\"", current );
+                char *mem = tcc_malloc( size + 4 );
+                if( mem ) {
+                    sprintf( tcc->error, "Error reading file \"%s\": %s",
+                             current, strerror( errno ) );
+                    if( fread( mem, 1, size, f ) == size ) {
+                        strcat( mem, "\n" );
+                        if( !tcc_compile_string( tcc->ts, mem ) ) {
+                            free( mem );
+                            fclose( f );
+                            current = va_arg( ap, char * );
+                            *tcc->error = 0;
+                            continue;
+                        }
+                    }
+                    tcc_free( mem );
+                }
+            }
+            fclose( f );
+        }
+        va_end( ap );
+        _TccLibRestoreStdOut( tcc );
+        return -1;
+    }
+    va_end( ap );
+    _TccLibRestoreStdOut( tcc );
+    return 0;
+}
+
 int TccLibLoadFiles( TccLib *tcc, const char *file, ... ) {
     va_list ap;
     const char *current = file;

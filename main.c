@@ -15,7 +15,7 @@ int main() {
      *
      */
     TccLibInit( &tcc );
-    rc = TccLibLoadFiles( &tcc, "./t/hello-bye.c", NULL );
+    rc = TccLibLoadSourceFiles( &tcc, "./t/hello-bye.tcc", NULL );
     if( rc ) {
         printf( "1) rc = %d, %s\n", rc, tcc.error );
         TccLibDown( &tcc );
@@ -35,7 +35,7 @@ int main() {
     /*
      *
      */
-    rc = TccLibMainFromFile( &tcc, "./t/main.c" );
+    rc = TccLibMainFromFile( &tcc, "./t/main.tcc" );
     printf( "2) rc = %d, %s\n", rc, *tcc.error ? tcc.error : "no errors" );
     /*
      *

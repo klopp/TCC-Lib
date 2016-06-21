@@ -41,6 +41,7 @@ TccLib *TccLibReset( TccLib *tcc );
 
 int TccLibLoadFiles( TccLib *tcc, const char *file, ... );
 int TccLibLoadSources( TccLib *tcc, const char *source, ... );
+int TccLibLoadSourceFiles( TccLib *tcc, const char *file, ... );
 
 int TccLibMainFromFile( TccLib *tcc, const char *file );
 int TccLibMainFromSource( TccLib *tcc, const char *source );
