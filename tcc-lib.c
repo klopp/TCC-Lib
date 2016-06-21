@@ -13,6 +13,29 @@
 /* -----------------------------------------------------------------------------
  *
  -----------------------------------------------------------------------------*/
+static void _TccLibSaveStdOut( TccLib *tcc ) {
+    tcc->saved_stdout = dup( STDOUT_FILENO );
+    tcc->dev_null = fopen( TCC_DEV_NULL, "w" );
+    dup2( fileno( tcc->dev_null ), STDOUT_FILENO );
+    *tcc->error = 0;
+}
+
+static void _TccLibRestoreStdOut( TccLib *tcc ) {
+    fflush( stdout );
+    if( tcc->dev_null ) {
+        fclose( tcc->dev_null );
+        tcc->dev_null = NULL;
+    }
+    if( tcc->saved_stdout != -1 ) {
+        dup2( tcc->saved_stdout, STDOUT_FILENO );
+        close( tcc->saved_stdout );
+        tcc->saved_stdout = -1;
+    }
+}
+
+/* -----------------------------------------------------------------------------
+ *
+ -----------------------------------------------------------------------------*/
 static void _TccErrorHandler( void *opaque, const char *msg ) {
     strncpy( ( ( TccLib * ) opaque )->error, msg, TCC_ERROR_BUF_SIZE - 1 );
     ( ( TccLib * ) opaque )->error[TCC_ERROR_BUF_SIZE] = 0;
@@ -31,7 +54,7 @@ TccLib *TccLibInit( TccLib *tcc ) {
 }
 
 void TccLibDown( TccLib *tcc ) {
-    _TccLibRestoreStdIn( tcc );
+    _TccLibRestoreStdOut( tcc );
     tcc_delete( tcc->ts );
 }
 
@@ -84,62 +107,39 @@ int TccLibMainFromSource( TccLib *tcc, const char *source ) {
 /* -----------------------------------------------------------------------------
  *
  -----------------------------------------------------------------------------*/
-static void _TccLibSaveStdIn( TccLib *tcc ) {
-    tcc->saved_stdout = dup( STDOUT_FILENO );
-    tcc->dev_null = fopen( TCC_DEV_NULL, "w" );
-    dup2( fileno( tcc->dev_null ), STDOUT_FILENO );
-    *tcc->error = 0;
-}
-
-static void _TccLibRestoreStdIn( TccLib *tcc ) {
-    fflush( stdout );
-    if( tcc->dev_null ) {
-        fclose( tcc->dev_null );
-        tcc->dev_null = NULL;
-    }
-    if( tcc->saved_stdout != -1 ) {
-        dup2( tcc->saved_stdout, STDOUT_FILENO );
-        close( tcc->saved_stdout );
-        tcc->saved_stdout = -1;
-    }
-}
-
-/* -----------------------------------------------------------------------------
- *
- -----------------------------------------------------------------------------*/
 int TccLibLoadFiles( TccLib *tcc, const char *file, ... ) {
     va_list ap;
     const char *current = file;
-    _TccLibSaveStdIn( tcc );
+    _TccLibSaveStdOut( tcc );
     va_start( ap, file );
     while( current ) {
         if( tcc_add_file( tcc->ts, current ) == -1 ) {
             va_end( ap );
-            _TccLibRestoreStdIn( tcc );
+            _TccLibRestoreStdOut( tcc );
             return -1;
         }
         current = va_arg( ap, char * );
     }
     va_end( ap );
-    _TccLibRestoreStdIn( tcc );
+    _TccLibRestoreStdOut( tcc );
     return 0;
 }
 
 int TccLibLoadSources( TccLib *tcc, const char *source, ... ) {
     va_list ap;
     const char *current = source;
-    _TccLibSaveStdIn( tcc );
+    _TccLibSaveStdOut( tcc );
     va_start( ap, source );
     while( current ) {
         if( tcc_compile_string( tcc->ts, current ) ) {
             va_end( ap );
-            _TccLibRestoreStdIn( tcc );
+            _TccLibRestoreStdOut( tcc );
             return -1;
         }
         current = va_arg( ap, char * );
     }
     va_end( ap );
-    _TccLibRestoreStdIn( tcc );
+    _TccLibRestoreStdOut( tcc );
     return 0;
 }
 
@@ -147,9 +147,9 @@ int TccLibLoadSources( TccLib *tcc, const char *source, ... ) {
  *
  -----------------------------------------------------------------------------*/
 int TccLibBind( TccLib *tcc, const char *name, void *val ) {
-    _TccLibSaveStdIn( tcc );
+    _TccLibSaveStdOut( tcc );
     tcc_add_symbol( tcc->ts, name, val );
-    _TccLibRestoreStdIn( tcc );
+    _TccLibRestoreStdOut( tcc );
     return *tcc->error ? -1 : 0;
 }
 
