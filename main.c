@@ -2,6 +2,10 @@
 
 #include "tcc-lib.h"
 
+int zzz( int a, int b ) {
+    return printf( "(%d/%d)\n", a, b );
+}
+
 int main() {
     TccLib tcc;
     int rc = 0;
@@ -18,13 +22,16 @@ int main() {
         return rc;
     }
     rc = TccLibBind( &tcc, "aaa", &aaa );
-    rc = TccLibBind( &tcc, "aaa", &aaa );
-    if( rc ) {
-        printf( "3) rc = %d, %s\n", rc, tcc.error );
-        TccLibDown( &tcc );
-        return rc;
-    }
-    tcc_add_symbol( tcc.ts, "bbb", &bbb );
+    /*
+        rc = TccLibBind( &tcc, "aaa", &aaa );
+        if( rc ) {
+            printf( "3) rc = %d, %s\n", rc, tcc.error );
+            TccLibDown( &tcc );
+            return rc;
+        }
+    */
+    TccLibBind( &tcc, "bbb", &bbb );
+    TccLibBind( &tcc, "zzz", zzz );
     /*
      *
      */
