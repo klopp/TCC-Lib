@@ -12,9 +12,9 @@
  *
  -----------------------------------------------------------------------------*/
 static void _TccLibSaveStdOut( TccLib *tcc ) {
-    tcc->saved_stdout = dup( STDOUT_FILENO );
+    tcc->saved_stdout = dup( fileno( stdout ) );
     tcc->dev_null = fopen( TCC_DEV_NULL, "w" );
-    dup2( fileno( tcc->dev_null ), STDOUT_FILENO );
+    dup2( fileno( tcc->dev_null ), fileno( stdout ) );
     *tcc->error = 0;
 }
 
@@ -25,7 +25,7 @@ static void _TccLibRestoreStdOut( TccLib *tcc ) {
         tcc->dev_null = NULL;
     }
     if( tcc->saved_stdout != -1 ) {
-        dup2( tcc->saved_stdout, STDOUT_FILENO );
+        dup2( tcc->saved_stdout, fileno( stdout ) );
         close( tcc->saved_stdout );
         tcc->saved_stdout = -1;
     }
