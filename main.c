@@ -1,7 +1,7 @@
 #include "tcc-lib.h"
 
-int zzz( int a, int b ) {
-    return printf( "(%d/%d)\n", a, b );
+static int zzz( int a, int b ) {
+    return printf( "zzz(%d,%d)\n", a, b );
 }
 
 int main() {
