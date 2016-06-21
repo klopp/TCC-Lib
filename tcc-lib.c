@@ -31,6 +31,7 @@ TccLib *TccLibInit( TccLib *tcc ) {
 }
 
 void TccLibDown( TccLib *tcc ) {
+    _TccLibRestoreStdIn( tcc );
     tcc_delete( tcc->ts );
 }
 
