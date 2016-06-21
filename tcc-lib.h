@@ -3,9 +3,6 @@
  *      Author: Vsevolod Lutovinov <klopp@yandex.ru>
  */
 
-/*
- *  That's All, Folks!
- */
 #ifndef TCC_LIB_H_
 #define TCC_LIB_H_
 
@@ -16,8 +13,9 @@ extern "C" {
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <linux/limits.h>
-#include "../tcc/libtcc.h"
+#include "tcc.h"
 
 #define TCC_ERROR_BUF_SIZE  PATH_MAX+PATH_MAX
 #ifdef __unix
@@ -52,5 +50,8 @@ int TccLibBind( TccLib *tcc, const char *name, void *val );
 }; /* extern "C" */
 #endif
 
-
 #endif /* TCC_LIB_H_ */
+
+/*
+ *  That's All, Folks!
+ */

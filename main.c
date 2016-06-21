@@ -1,5 +1,3 @@
-#include "libtcc.c"
-
 #include "tcc-lib.h"
 
 int zzz( int a, int b ) {
